@@ -1,3 +1,5 @@
+// eplan fix
+
 /*!
  * AngularJS Material Design
  * https://github.com/angular/material
@@ -8965,6 +8967,8 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
       noBlur               = false,
       selectedItemWatchers = [],
       hasFocus             = false,
+      // eplan fix
+      hasUpdated           = true,
       fetchesInProgress    = 0,
       enableWrapScroll     = null,
       inputModelCtrl       = null,
@@ -9572,7 +9576,12 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
    */
   function focus($event) {
     hasFocus = true;
-
+    // eplan fix
+    if(!hasUpdated){
+      return;
+    } else{
+      hasUpdated = false;
+    }
     if (isSearchable() && isMinLengthMet()) {
       handleQuery();
     }
@@ -9639,6 +9648,8 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
         break;
       default:
     }
+    // eplan fix
+    hasUpdated = true;
   }
 
   // getters
@@ -35845,6 +35856,8 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
     defineBooleanAttribute('noSelectClick');
     defineBooleanAttribute('centerTabs', handleCenterTabs);
     defineBooleanAttribute('enableDisconnect');
+    // eplan fix
+    defineBooleanAttribute('noRedirectFocus');
 
     // Define public properties
     ctrl.scope             = $scope;
@@ -36026,7 +36039,8 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
     if (newIndex === oldIndex) return;
     if (!getElements().tabs[ newIndex ]) return;
     adjustOffset();
-    redirectFocus();
+    // eplan fix
+    redirectFocus(true);
   }
 
   /**
@@ -36487,7 +36501,9 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
    * This is used to forward focus to tab container elements. This method is necessary to avoid
    * animation issues when attempting to focus an item that is out of view.
    */
-  function redirectFocus () {
+  function redirectFocus (force) {
+    // eplan fix
+    if(!force) return;
     ctrl.styleTabItemFocus = ($mdInteraction.getLastInteractionType() === 'keyboard');
     var tabToFocus = getElements().tabs[ctrl.focusIndex];
     if (tabToFocus) {
